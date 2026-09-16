@@ -30,13 +30,11 @@
             100% { transform: translateY(-200px); }
         }
 
-        /* Card Container Floating & Fixed Aspect Ratio */
+        /* Card Container - Fits Full Mobile Screen Height */
         .card-container {
             width: 100%; 
             max-width: 420px; 
-            height: auto; 
-            aspect-ratio: 9 / 18.5; 
-            max-height: 88vh;
+            height: 100dvh; 
             position: relative; 
             z-index: 10;
             animation: floatCard 6s ease-in-out infinite;
@@ -58,7 +56,8 @@
         .card-inside {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-image: url('inside.jpg');
-            background-size: cover; 
+            background-size: contain; 
+            background-repeat: no-repeat;
             background-position: center;
             z-index: 1; display: flex; flex-direction: column;
             justify-content: flex-start; align-items: center;
@@ -114,7 +113,6 @@
             transition: all 0.3s ease;
         }
 
-        /* නොතෝරපු Titles කපා හැරීමේ line එක */
         .title-option.strikethrough {
             text-decoration: line-through;
             opacity: 0.5;
@@ -202,7 +200,7 @@
             font-weight: normal;
         }
 
-        /* Flexible Responsive Location Pin Positioning */
+        /* Location Pin Positioning */
         .location-link {
             position: absolute;
             top: 80%; 
@@ -214,7 +212,6 @@
             pointer-events: none;
         }
 
-        /* Initial Entrance Fade/Pop for Location Link */
         .wedding-card.is-open .location-link {
             animation: fadeInLink 0.5s ease forwards;
             animation-delay: 0.8s;
@@ -228,7 +225,6 @@
             }
         }
 
-        /* Continuously Repeating Pop-Up Button Animation with Responsive Scaling */
         .location-btn {
             display: flex;
             align-items: center;
@@ -282,7 +278,9 @@
         .card-cover {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-image: url('cover.jpg');
-            background-size: cover; background-position: center;
+            background-size: contain; 
+            background-repeat: no-repeat;
+            background-position: center;
             z-index: 10; display: flex; flex-direction: column;
             justify-content: flex-end; align-items: center; padding-bottom: 70px;
             transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1);
@@ -291,7 +289,6 @@
             transform: translateY(-100%);
         }
 
-        /* Premium Guest Name Box on Front Cover */
         .guest-name-box {
             position: relative; background: rgba(255, 255, 255, 0.88);
             backdrop-filter: blur(15px); border: 1px solid #d4af37;
@@ -300,17 +297,6 @@
             letter-spacing: 1.5px; text-transform: capitalize;
             overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
             display: none;
-        }
-        .guest-name-box::after {
-            content: ""; position: absolute; top: 0; left: -100%;
-            width: 50%; height: 100%;
-            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 50%, rgba(255,255,255,0) 100%);
-            transform: skewX(-25deg); animation: lightSweep 3.5s infinite;
-        }
-        @keyframes lightSweep {
-            0% { left: -100%; }
-            30% { left: 200%; }
-            100% { left: 200%; }
         }
     </style>
 </head>
@@ -323,12 +309,9 @@
     <div class="card-container">
         <div class="wedding-card" id="inviteCard" onclick="openInvitation()">
             
-            <!-- Inside Invitation -->
             <div class="card-inside" id="innerImg">
-                <!-- Falling Golden Hearts Overlay -->
                 <div class="hearts-container" id="heartsContainer"></div>
 
-                <!-- Dynamic Guest Title & Name Section (inside.jpg උඩ පෙනෙන කොටස) -->
                 <div class="inside-guest-overlay">
                     <div class="titles-container">
                         <span id="t-mr" class="title-option">Mr.</span> / 
@@ -339,7 +322,6 @@
                     <div id="innerGuestName" class="guest-full-name">Guest Name</div>
                 </div>
 
-                <!-- Pure Transparent Glass Countdown Timer -->
                 <div class="countdown-container">
                     <div class="countdown-title">Forever Begins In</div>
                     <div class="countdown-timer">
@@ -350,7 +332,6 @@
                     </div>
                 </div>
 
-                <!-- Repeating Pop-Up Google Maps Pin Button -->
                 <a href="https://maps.app.goo.gl/nhUzBx7LYy71X4X38?g_st=ic" target="_blank" class="location-link" onclick="event.stopPropagation();">
                     <div class="location-btn" title="Open Location on Google Maps">
                         <svg class="location-icon" viewBox="0 0 24 24">
@@ -360,7 +341,6 @@
                 </a>
             </div>
 
-            <!-- Slide-Up Cover Page -->
             <div class="card-cover" id="coverImg">
                 <div class="guest-name-box" id="guestNameBox"></div>
             </div>
@@ -369,7 +349,6 @@
     </div>
 
     <script>
-        // --- Wedding Date Setup (2026.12.16 9:00 AM) ---
         const weddingDate = new Date("2026-12-16T09:00:00").getTime();
 
         function updateCountdown() {
@@ -393,22 +372,18 @@
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        // --- URL Parameters Handling (Name & Title Dynamic Selection) ---
         const urlParams = new URLSearchParams(window.location.search);
         let name = urlParams.get('name');
-        let title = urlParams.get('title'); // mr, mrs, miss, family
+        let title = urlParams.get('title');
 
-        // Cover page guest name box
         const nameBox = document.getElementById('guestNameBox');
         if (name && name.trim() !== "") {
             nameBox.style.display = "none";
             nameBox.innerText = name;
             
-            // Inside Card Guest Name
             document.getElementById('innerGuestName').innerText = name;
         }
 
-        // Title Strikethrough Handling
         const titleElements = {
             'mr': document.getElementById('t-mr'),
             'mrs': document.getElementById('t-mrs'),
@@ -419,7 +394,6 @@
         if (title) {
             const selectedTitle = title.toLowerCase().trim();
             if (titleElements[selectedTitle]) {
-                // selected නැති අනිත් සියලුම Title වලට Strikethrough Class එක දායි
                 Object.keys(titleElements).forEach(key => {
                     if (key !== selectedTitle) {
                         titleElements[key].classList.add('strikethrough');
@@ -428,7 +402,6 @@
             }
         }
 
-        // --- Falling Golden Hearts Animation Generator ---
         function createGoldenHeart() {
             const container = document.getElementById('heartsContainer');
             if (!container) return;
@@ -449,7 +422,6 @@
             }, 6500);
         }
 
-        // --- Slide-Up Animation & Music Trigger ---
         function openInvitation() {
             const card = document.getElementById('inviteCard');
             const cover = document.getElementById('coverImg');
