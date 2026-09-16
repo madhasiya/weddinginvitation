@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Invitation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: #050505;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; font-family: 'Georgia', serif; overflow: hidden;
+        }
+
+        /* Floating Gold Particles Background */
+        .particles {
+            position: absolute; width: 100%; height: 100%; z-index: 0;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #d4af37, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 50px 160px, #d4af37, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 130px 80px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 160px 120px, #d4af37, rgba(0,0,0,0));
+            background-repeat: repeat; background-size: 200px 200px;
+            animation: particleAnimation 30s linear infinite; opacity: 0.6;
+        }
+        @keyframes particleAnimation {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-200px); }
+        }
+
+        /* Card Container Floating */
+        .card-container {
+            width: 100%; max-width: 420px; height: 100vh; max-height: 850px;
+            position: relative; z-index: 10;
+            animation: floatCard 6s ease-in-out infinite;
+        }
+        @keyframes floatCard {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+        }
+
+        /* Wedding Card Frame */
+        .wedding-card {
+            width: 100%; height: 100%; position: relative;
+            cursor: pointer; border-radius: 12px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.9);
+            overflow: hidden; background-color: #000;
+        }
+
+        /* Inside Invitation Page */
+        .card-inside {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('inside.jpg');
+            background-size: cover; background-position: center;
+            z-index: 1; display: flex; flex-direction: column;
+            justify-content: flex-start; align-items: center;
+            padding: 15px 10px;
+            opacity: 0; transform: scale(0.92);
+            transition: opacity 1.2s ease 0.2s, transform 1.2s ease 0.2s;
+        }
+        .wedding-card.is-open .card-inside {
+            opacity: 1; transform: scale(1);
+        }
+
+        /* Falling Golden Hearts Overlay */
+        .hearts-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; overflow: hidden; z-index: 5;
+        }
+        .falling-heart {
+            position: absolute; 
+    top: -20px; 
+    color: #d4af37 !important; /* Gold පාට බලගැන්වීමට !important යොදන්න */
+    text-shadow: 0 0 6px rgba(212, 175, 55, 0.8), 0 0 10px rgba(255, 215, 0, 0.5);
+    animation: fall linear forwards; 
+    pointer-events: none;
+}
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.9; }
+            80% { opacity: 0.8; }
+            100% { transform: translateY(870px) rotate(360deg); opacity: 0; }
+        }
+
+        /* Dynamic Title & Guest Name Overlay on Inside Card */
+        .inside-guest-overlay {
+            position: absolute;
+            top: 17.8%; /* inside.jpg එකේ අදාළ කොටස තියෙන තැන (වෙනස් කරගන්න) */
+            left: 52%;
+            transform: translateX(-50%);
+            width: 80%;
+            text-align: center;
+            z-index: 6;
+            color: #2b2b2b; /* Card එකේ Text වල පාට */
+        }
+
+        .titles-container {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+            color: #333333;
+        }
+
+        .title-option {
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        /* නොතෝරපු Titles කපා හැරීමේ line එක */
+        .title-option.strikethrough {
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+
+        .guest-full-name {
+            font-size: 17px;
+            font-weight: bold;
+            color: #111111;
+            letter-spacing: 1px;
+            margin-top: 2px;
+            border-top: 1.5px solid #2b2b2b; /* නමට උඩින් එන ඉර */
+            padding-top: 3px;
+            display: inline-block;
+            min-width: 180px;
+        }
+
+        /* Small Transparent Glass Countdown Box */
+        .countdown-container {
+            position: absolute;
+            top: 15px;
+            left: 52.5%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.38);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 6px 10px;
+            text-align: center;
+            color: #fff;
+            width: max-content;
+            min-width: 170px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            z-index: 6;
+        }
+
+        .countdown-title {
+            font-family: 'Georgia', serif;
+            font-size: 6px;
+            color: #d4af37;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .countdown-timer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .time-box {
+            text-align: center;
+            position: relative;
+        }
+
+        .time-box:not(:last-child)::after {
+            content: ":";
+            position: absolute;
+            right: -6px;
+            top: 0px;
+            color: rgba(212, 175, 55, 0.8);
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .time-box span {
+            font-size: 12px;
+            font-weight: normal;
+            color: #ffffff;
+            display: block;
+            line-height: 1;
+            font-family: 'Georgia', serif;
+        }
+
+        .time-box p {
+            font-size: 5px;
+            color: #d4af37;
+            text-transform: uppercase;
+            margin-top: 3px;
+            letter-spacing: 0.5px;
+            font-weight: normal;
+        }
+
+        /* Icon-Only Location Pin Link Positioning */
+        .location-link {
+            position: absolute;
+            top: 80%; 
+            left: 26%; 
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            z-index: 7;
+            text-decoration: none;
+            pointer-events: none;
+        }
+
+        /* Initial Entrance Fade/Pop for Location Link */
+        .wedding-card.is-open .location-link {
+            animation: fadeInLink 0.5s ease forwards;
+            animation-delay: 0.8s;
+            pointer-events: auto;
+        }
+
+        @keyframes fadeInLink {
+            to {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Continuously Repeating Pop-Up Button Animation */
+        .location-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1.5px solid #d4af37;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+            animation: continuousPop 4s infinite ease-in-out;
+        }
+
+        @keyframes continuousPop {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+            }
+            15% {
+                transform: scale(1.35);
+                box-shadow: 0 0 25px rgba(212, 175, 55, 1), 0 0 35px rgba(255, 215, 0, 0.8);
+            }
+            30% {
+                transform: scale(0.95);
+            }
+            45% {
+                transform: scale(1.2);
+                box-shadow: 0 0 20px rgba(212, 175, 55, 0.8);
+            }
+            60% {
+                transform: scale(1);
+                box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+            }
+        }
+
+        .location-btn:hover {
+            transform: scale(1.3) !important;
+            background: rgba(212, 175, 55, 0.2);
+        }
+
+        .location-icon {
+            width: 22px;
+            height: 22px;
+            fill: #d4af37;
+        }
+
+        /* Front Cover Slide-Up Animation */
+        .card-cover {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('cover.jpg');
+            background-size: cover; background-position: center;
+            z-index: 10; display: flex; flex-direction: column;
+            justify-content: flex-end; align-items: center; padding-bottom: 70px;
+            transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+        .card-cover.open {
+            transform: translateY(-100%);
+        }
+
+        /* Premium Guest Name Box on Front Cover */
+        .guest-name-box {
+            position: relative; background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(15px); border: 1px solid #d4af37;
+            color: #1a1a1a; padding: 14px 35px; border-radius: 4px;
+            font-size: 18px; font-weight: bold; text-align: center;
+            letter-spacing: 1.5px; text-transform: capitalize;
+            overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            display: none;
+        }
+        .guest-name-box::after {
+            content: ""; position: absolute; top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-25deg); animation: lightSweep 3.5s infinite;
+        }
+        @keyframes lightSweep {
+            0% { left: -100%; }
+            30% { left: 200%; }
+            100% { left: 200%; }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" src="music.mp3" preload="auto"></audio>
+
+    <div class="particles"></div>
+
+    <div class="card-container">
+        <div class="wedding-card" id="inviteCard" onclick="openInvitation()">
+            
+            <!-- Inside Invitation -->
+            <div class="card-inside" id="innerImg">
+                <!-- Falling Golden Hearts Overlay -->
+                <div class="hearts-container" id="heartsContainer"></div>
+
+                <!-- Dynamic Guest Title & Name Section (inside.jpg උඩ පෙනෙන කොටස) -->
+                <div class="inside-guest-overlay">
+                    <div class="titles-container">
+                        <span id="t-mr" class="title-option">Mr.</span> / 
+                        <span id="t-mrs" class="title-option">Mrs.</span> / 
+                        <span id="t-miss" class="title-option">Miss</span> / 
+                        <span id="t-family" class="title-option">Family</span>
+                    </div>
+                    <div id="innerGuestName" class="guest-full-name">Guest Name</div>
+                </div>
+
+                <!-- Pure Transparent Glass Countdown Timer -->
+                <div class="countdown-container">
+                    <div class="countdown-title">Forever Begins In</div>
+                    <div class="countdown-timer">
+                        <div class="time-box"><span id="days">00</span><p>Days</p></div>
+                        <div class="time-box"><span id="hours">00</span><p>Hours</p></div>
+                        <div class="time-box"><span id="mins">00</span><p>Mins</p></div>
+                        <div class="time-box"><span id="secs">00</span><p>Secs</p></div>
+                    </div>
+                </div>
+
+                <!-- Repeating Pop-Up Google Maps Pin Button -->
+                <a href="https://maps.app.goo.gl/nhUzBx7LYy71X4X38?g_st=ic" target="_blank" class="location-link" onclick="event.stopPropagation();">
+                    <div class="location-btn" title="Open Location on Google Maps">
+                        <svg class="location-icon" viewBox="0 0 24 24">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5-2.5z"/>
+                        </svg>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Slide-Up Cover Page -->
+            <div class="card-cover" id="coverImg">
+                <div class="guest-name-box" id="guestNameBox"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // --- Wedding Date Setup (2026.12.16 9:00 AM) ---
+        const weddingDate = new Date("2026-12-16T09:00:00").getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const difference = weddingDate - now;
+
+            if (difference > 0) {
+                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+                document.getElementById('days').innerText = days < 10 ? '0' + days : days;
+                document.getElementById('hours').innerText = hours < 10 ? '0' + hours : hours;
+                document.getElementById('mins').innerText = minutes < 10 ? '0' + minutes : minutes;
+                document.getElementById('secs').innerText = seconds < 10 ? '0' + seconds : seconds;
+            } else {
+                document.querySelector('.countdown-container').innerHTML = "<div class='countdown-title'>Today is the Big Day!</div>";
+            }
+        }
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        // --- URL Parameters Handling (Name & Title Dynamic Selection) ---
+        const urlParams = new URLSearchParams(window.location.search);
+        let name = urlParams.get('name');
+        let title = urlParams.get('title'); // mr, mrs, miss, family
+
+        // Cover page guest name box
+        const nameBox = document.getElementById('guestNameBox');
+        if (name && name.trim() !== "") {
+            nameBox.style.display = "block";
+            nameBox.innerText = name;
+            
+            // Inside Card Guest Name
+            document.getElementById('innerGuestName').innerText = name;
+        }
+
+        // Title Strikethrough Handling
+        const titleElements = {
+            'mr': document.getElementById('t-mr'),
+            'mrs': document.getElementById('t-mrs'),
+            'miss': document.getElementById('t-miss'),
+            'family': document.getElementById('t-family')
+        };
+
+        if (title) {
+            const selectedTitle = title.toLowerCase().trim();
+            if (titleElements[selectedTitle]) {
+                // selected නැති අනිත් සියලුම Title වලට Strikethrough Class එක දායි
+                Object.keys(titleElements).forEach(key => {
+                    if (key !== selectedTitle) {
+                        titleElements[key].classList.add('strikethrough');
+                    }
+                });
+            }
+        }
+
+        // --- Falling Golden Hearts Animation Generator ---
+        function createGoldenHeart() {
+            const container = document.getElementById('heartsContainer');
+            if (!container) return;
+
+            const heart = document.createElement('div');
+            heart.classList.add('falling-heart');
+            heart.innerHTML = '&#x2665;&#xFE0E;';
+            
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.animationDuration = (Math.random() * 3 + 3.5) + 's';
+            heart.style.fontSize = (Math.random() * 6 + 8) + 'px';
+            heart.style.opacity = Math.random() * 0.7 + 0.3;
+
+            container.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 6500);
+        }
+
+        // --- Slide-Up Animation & Music Trigger ---
+        function openInvitation() {
+            const card = document.getElementById('inviteCard');
+            const cover = document.getElementById('coverImg');
+            
+            if (!cover.classList.contains('open')) {
+                card.classList.add('is-open');
+                cover.classList.add('open');
+
+                setInterval(createGoldenHeart, 280);
+
+                let music = document.getElementById('bgMusic');
+                if (music && music.paused) {
+                    music.play().catch(e => console.log("Audio play allowed after click"));
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>
